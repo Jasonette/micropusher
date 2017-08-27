@@ -71,6 +71,9 @@ Form = {
   }, {
     $type: "input",
     type: "url",
+    oninput: function() {
+      this._endpoint = this.value;
+    },
     placeholder: "Enter your micropush server endpoint url"
   }, {
     $type: "h5",

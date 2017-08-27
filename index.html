@@ -1,0 +1,126 @@
+<html>
+<style>
+form {
+  width: 100%;
+  max-width: 800px;
+  margin: 100px auto;
+}
+form input {
+  display: block;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background: #ebebeb;
+  width: 100%;
+  border-radius: 0;
+  outline: none;
+}
+.CodeMirror{
+  border: 1px solid #ebebeb;
+  margin-bottom: 10px;
+}
+form input[type=submit] {
+  background: yellowgreen;
+  color: white;
+}
+h5 {
+  padding: 10px 0 0 0;
+  margin: 10px 0 5px;
+  font-family: verdana;
+  font-weight: normal;
+}
+</style>
+<script src="https://www.celljs.org/cell.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.css" rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/theme/neo.css' rel='stylesheet'>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+<script src='https://tojson.co/node_modules/jsonlint/lib/jsonlint.js'></script>
+<script src='https://tojson.co/node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='https://tojson.co/node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='https://tojson.co/node_modules/codemirror/addon/lint/json-lint.js'></script>
+<script src='https://tojson.co/node_modules/codemirror/addon/edit/closebrackets.js'></script>
+<script src='https://tojson.co/node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css" rel="stylesheet">
+<script>
+Form = {
+  $cell: true,
+  $type: "form",
+  method: "post",
+  _token: "",
+  _message: "",
+  _payload: null,
+  _endpoint: "",
+  onsubmit: function() {
+    var self = this;
+    fetch(this._endpoint, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(self._payload)
+    })
+    return false;
+  },
+  $components: [{
+    $type: "h5",
+    $text: "Micropush endpoint"
+  }, {
+    $type: "input",
+    type: "url",
+    placeholder: "Enter your micropush server endpoint url"
+  }, {
+    $type: "h5",
+    $html: "JSON payload <a href='https://github.com/Jasonette/micropush#micropush-json-payload'>[Learn more]</a>"
+  }, {
+    $type: "textarea",
+    name: "payload",
+    $init: function(){
+      var self = this;
+      this._ed = CodeMirror.fromTextArea(this, {
+        mode: "application/json",
+        lineNumbers: true,
+        lineWrapping: true,
+        lint: true,
+        styleActiveLine: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        viewportMargin: true,
+        theme: "neo",
+        gutters: ["CodeMirror-lint-markers"]
+      })
+      this._ed.setSize(null, 600);
+
+      this._ed.on('change', function() {
+        self._payload = JSON.parse(self.value);
+      })
+    },
+    value: JSON.stringify({
+      "type": "$push.ios",
+      "options": {
+        "to": {
+          "token": "[REPLACE WITH YOUR DEVICE TOKEN]",
+          "topic": "[REPLACE WITH YOUR APP BUNDLE ID]"
+        },
+        "data": {
+          "href": {
+            "url": "https://news.ycombinator.com",
+            "view": "web"
+          }
+        },
+        "notification": {
+          "alert": "\uD83D\uDCE7 \u2709 You have a new message",
+          "sound": "default"
+        }
+      }
+    }, null, 2)
+  }, {
+    $type: "input",
+    type: "submit"
+  }]
+}
+</script>
+</html>

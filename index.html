@@ -96,9 +96,8 @@ Form = {
         gutters: ["CodeMirror-lint-markers"]
       })
       this._ed.setSize(null, 600);
-
       this._ed.on('change', function() {
-        self._payload = JSON.parse(self.value);
+        self._payload = JSON.parse(self._ed.getValue());
       })
     },
     value: JSON.stringify({
